@@ -1,23 +1,27 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <NavBar></NavBar>
     <router-view/>
   </div>
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: { NavBar }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Kosugi+Maru|Noto+Sans+JP&display=swap');
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Kosugi Maru', 'Noto Sans JP', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

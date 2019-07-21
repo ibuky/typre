@@ -80,6 +80,8 @@
         </a>
       </li>
     </ul>
+    <router-link to="/NextPage">Go to Next Page</router-link>
+    <router-link to="/Home">Go to Home Page</router-link>
   </div>
 </template>
 
