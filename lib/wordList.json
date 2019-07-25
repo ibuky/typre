@@ -1,0 +1,21 @@
+{
+  "dictionary": [
+    {
+      "display": "テスト",
+      "yomi": "てすと",
+      "sentenceJp": "テスト",
+      "sentenceRm": [
+        "tesuto"
+      ]
+    },
+    {
+      "display": "日本語",
+      "yomi": "にほんご",
+      "sentenceJp": "日本語",
+      "sentenceRm": [
+        "nihongo",
+        "nihonngo"
+      ]
+    }
+  ]
+}

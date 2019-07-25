@@ -24,6 +24,14 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-multi-spaces': ['warn', {
+      'ignoreEOLComments': true,      // 行末コメント前のmulti spaceは無視
+      'exceptions': {
+        'Property'           : true,  // objectのキーと値の間は無視
+        'VariableDeclarator' : true,  // 変数宣言では無視
+        'ImportDeclaration'  : true   // importでは無視
+      }
+    }]
   }
 }
