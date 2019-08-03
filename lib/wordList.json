@@ -16,6 +16,15 @@
         "nihongo",
         "nihonngo"
       ]
+    },
+    {
+      "display": "自作キーボード",
+      "yomi": "じさくきーぼーど",
+      "sentenceJp": "自作キーボード",
+      "sentenceRm": [
+        "zisakuki-bo-do",
+        "jisakuki-bo-do"
+      ]
     }
   ]
 }
