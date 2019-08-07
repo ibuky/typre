@@ -19,6 +19,8 @@ import DispJp from '@/components/DispJp.vue'
 import DispRm from '@/components/DispRm.vue'
 import CurrentStatus from '@/components/CurrentStatus.vue'
 
+import dict from '../../lib/wordList.json'
+
 export default {
   name: 'Type',
   components: {
@@ -28,83 +30,20 @@ export default {
   },
   data () {
     return {
-      dictionary: [
-        // {
-        //   sentenceJp: '天使',
-        //   sentenceRm: ['tensi', 'tenshi', 'tennsi', 'tennshi']
-        // },
-        // {
-        //   sentenceJp: '店長',
-        //   sentenceRm: ['tentyou', 'tenchou', 'tentixyou', 'tenchixyou', 'tenntyou', 'tennchou', 'tenntixyou', 'tennchixyou']
-        // }
-        {
-          sentenceJp: 'ルブおいしい',
-          sentenceRm: [ 'rubuoisii', 'rubuoishii' ]
-        },
-        {
-          sentenceJp: '遊舎工房',
-          sentenceRm: [ 'yuusyakoubou', 'yuushakoubou', 'yuusixyakoubou', 'yuushixyakoubou' ]
-        },
-        {
-          sentenceJp: '自作キーボード',
-          sentenceRm: [ 'zisakuki-bo-do', 'jisakuki-bo-do' ]
-        },
-        {
-          sentenceJp: '格子配列',
-          sentenceRm: [ 'kousihairetu', 'koushihairetu', 'kousihairetsu', 'koushihairetsu' ]
-        },
-        {
-          sentenceJp: 'もげないで',
-          sentenceRm: [ 'mogenaide' ]
-        },
-        {
-          sentenceJp: '進捗はどうですか',
-          sentenceRm: [
-            'sintyokuhadoudesuka',
-            'shintyokuhadoudesuka',
-            'sinchokuhadoudesuka',
-            'shinchokuhadoudesuka',
-            'sintixyokuhadoudesuka',
-            'shintixyokuhadoudesuka',
-            'sinchixyokuhadoudesuka',
-            'shinchixyokuhadoudesuka',
-            'sinntyokuhadoudesuka',
-            'shinntyokuhadoudesuka',
-            'sinnchokuhadoudesuka',
-            'shinnchokuhadoudesuka',
-            'sinntixyokuhadoudesuka',
-            'shinntixyokuhadoudesuka',
-            'sinnchixyokuhadoudesuka',
-            'shinnchixyokuhadoudesuka'
-          ]
-        },
-        {
-          sentenceJp: 'キーキャップ',
-          sentenceRm: [
-            'ki-kyappu',
-            'ki-kixyappu',
-            'ki-kyaxtupu',
-            'ki-kixyaxtupu',
-            'ki-kyaxtsupu',
-            'ki-kixyaxtsupu'
-          ]
-        },
-        {
-          sentenceJp: 'アルチザン',
-          sentenceRm: [ 'arutizann', 'aruchizann' ]
-        },
-        {
-          sentenceJp: 'スンマモニ',
-          sentenceRm: [ 'sunmamoni', 'sunnmamoni' ]
-        },
-      ],
+      dictionary: [],     // 単語辞書
       sentenceJp: '',     // 表示する日本語
       sentenceRm: [],     // 入力可能なローマ字全件
       sentenceRmDisp: '', // 表示するローマ字
       sentenceMt: '',     // 一致したキャラクタ
 
+      timeStart: null,    // 開始時間
+      timeEnd: null,      // 終了時間
       countTyped: 0,      // タイプ数(ミスは除く)
-      countMiss: 0        // ミス数
+      countMiss: 0,       // ミス数
+      countComp: 0,       // 完了数
+      countGreat: 0,      // ミスなし完了数
+
+      keyMiss: {}         // ミスしたキーの情報
     }
   },
   methods: {
@@ -227,13 +166,14 @@ export default {
     }
   },
   mounted () {
+    this.dictionary = dict.dictionary
     // 辞書内からランダムに選択
     this.initSentence()
   },
   directives: {
     focus: {
       inserted: function (el) {
-        el.focus()
+        el.focus() // フォーカスが外れないようにする
       }
     }
   }
@@ -241,6 +181,7 @@ export default {
 </script>
 
 <style scoped>
+/* キー入力を受け取るためのインプットを見えない、触れないようにする */
 input {
   opacity: 0;
   pointer-events: none;

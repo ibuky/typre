@@ -1,12 +1,18 @@
 {
-    "dictionary": [
-        {
-            "display": "テスト",
-            "yomi": "てすと"
-        },
-        {
-            "display": "日本語",
-            "yomi": "にほんご"
-        }
-    ]
+  "example": [
+    {
+      "display": "ここに画面上に表示する文字列を指定します。",
+      "yomi": "ここに文字列のよみをひらがなで指定します。"
+    },
+    {
+      "display": "日本語",
+      "yomi": "にほんご"
+    },
+    {
+      "display": "",
+      "yomi": ""
+    }
+  ],
+  "dictionary": [
+  ]
 }
