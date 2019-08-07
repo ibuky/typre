@@ -87,7 +87,10 @@ export default {
       return modKeys.includes(xKey)
     },
 
-    // キー判定
+    /**
+     * @param {event} xKey キー入力イベント
+     * @returns {boolean} いずれかの候補に当てはまらる場合、ture
+     */
     compareCharNext: function (xKey) {
       // どのcharNextにも当てはまらない場合
       if (!this.sentenceRm.some(s => s.charNext === xKey)) return false
@@ -96,7 +99,9 @@ export default {
       return true
     },
 
-    // ランダムな文をセット
+    /**
+     * ランダムな文を画面上にセットします
+     */
     setRandomSentence: function () {
       const dict = this.dictionary
       const sentenceRandom = dict[Math.floor(Math.random() * Math.floor(dict.length))]
@@ -114,16 +119,24 @@ export default {
       this.sentenceRmDisp = this.sentenceRm[0].romaji
     },
 
-    // inputにフォーカスをセット
+    /**
+     * input要素にフォーカスをセットします
+     * @param {object} e 要素
+     */
     setFocus: function (e) {
       e.target.focus()
     },
 
+    /**
+     * 入力ミス時の処理
+     */
     onMismatch: function () {
       this.countMiss++
     },
 
-    // 正解時の処理
+    /**
+     * 入力正解時の処理
+     */
     onCorrect: function () {
       this.countTyped++
 
@@ -150,12 +163,18 @@ export default {
     },
 
     // 最初の文字を取得
+    /**
+     * 候補文章の、残りの中から最初の文字を取得します
+     * @param {String} xSentence 文章
+     */
     getFirstChar: function (xSentence) {
       if (xSentence == null) return console.log('no sentence given')
       return xSentence.slice(0, 1)
     },
 
-    // 完了時の処理
+    /**
+     * 文章の最後の文字の入力が完了したときの処理
+     */
     completeSentence: function () {
       this.clearDisplay()
       this.setRandomSentence()
