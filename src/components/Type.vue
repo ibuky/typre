@@ -13,7 +13,7 @@
         </div>
       </div>
     </section>
-    <CurrentStatus :countTyped="countTyped" :countMiss="countMiss"></CurrentStatus>
+    <CurrentStatus :countTyped="countTyped" :countMiss="countMiss" :countComp="countComp"></CurrentStatus>
   </div>
 </template>
 
@@ -181,6 +181,7 @@ export default {
      * 文章の最後の文字の入力が完了したときの処理
      */
     completeSentence: function () {
+      this.countComp++
       this.clearDisplay()
       this.setRandomSentence()
     },
