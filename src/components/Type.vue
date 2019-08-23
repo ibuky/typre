@@ -2,11 +2,14 @@
   <div class="typing-test">
     <section class="hero is-fullheight-with-navbar">
       <div class="hero-body">
-        <div class="container">
+        <div ref="count" class="container">
+          <h1 class="title is-1">{{ countDown }}</h1>
+        </div>
+        <div ref="sentence" class="container">
           <DispJp :sentenceJp="sentenceJp"></DispJp>
           <br>
           <DispRm :sentenceRmDisp="sentenceRmDisp" :sentenceMt="sentenceMt"></DispRm>
-          <input v-focus type="text" @blur="setFocus" @keydown="onKeydown">
+          <input v-focus ref="input" type="text" @blur="setFocus" @keydown="onKeydown">
         </div>
       </div>
     </section>
@@ -36,6 +39,8 @@ export default {
       sentenceRmDisp: '', // 表示するローマ字
       sentenceMt: '',     // 一致したキャラクタ
 
+      countDown: 3,       // 開始までのカウントダウン
+
       timeStart: null,    // 開始時間
       timeEnd: null,      // 終了時間
       countTyped: 0,      // タイプ数(ミスは除く)
@@ -52,6 +57,7 @@ export default {
      */
     initSentence: function () {
       this.setRandomSentence()
+      this.$refs.input.focus()
     },
 
     /**
@@ -162,7 +168,6 @@ export default {
       }
     },
 
-    // 最初の文字を取得
     /**
      * 候補文章の、残りの中から最初の文字を取得します
      * @param {String} xSentence 文章
@@ -182,12 +187,25 @@ export default {
 
     clearDisplay: function () {
       this.sentenceMt = ''
+    },
+
+    startCountDown: function () {
+      let timer = setInterval(() => {
+        this.countDown--
+        if (this.countDown === 0) {
+          this.$refs.count.classList.add('display-none')
+          this.$refs.sentence.classList.remove('display-none')
+          this.initSentence()
+          clearInterval(timer)
+        }
+      }, 1000)
     }
   },
   mounted () {
     this.dictionary = dict.dictionary
     // 辞書内からランダムに選択
-    this.initSentence()
+    this.$refs.sentence.classList.add('display-none')
+    this.startCountDown()
   },
   directives: {
     focus: {
@@ -204,5 +222,9 @@ export default {
 input {
   opacity: 0;
   pointer-events: none;
+}
+
+.display-none {
+  display: none;
 }
 </style>
