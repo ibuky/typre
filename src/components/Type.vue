@@ -67,14 +67,10 @@ export default {
       if (this.isModKeys(e.key)) return // 修飾キーは無視
       if (e.repeat) return              // キーリピート状態は無視
 
+      if (e.key === 'Escape') this.onKeydownEscape()
+
       // 正誤判定
-      if (this.compareCharNext(e.key)) {
-        // 正しい
-        this.onCorrect()
-      } else {
-        // 間違い
-        this.onMismatch()
-      }
+      this.compareCharNext(e.key) ? this.onCorrect() : this.onMismatch()
     },
 
     /**
@@ -186,10 +182,16 @@ export default {
       this.setRandomSentence()
     },
 
+    /**
+     * タイピング部分の表示内容をクリア
+     */
     clearDisplay: function () {
       this.sentenceMt = ''
     },
 
+    /**
+     * カウントダウンをスタート
+     */
     startCountDown: function () {
       let timer = setInterval(() => {
         this.countDown--
@@ -200,6 +202,13 @@ export default {
           clearInterval(timer)
         }
       }, 1000)
+    },
+
+    /**
+     * 終了画面へ遷移
+     */
+    onKeydownEscape: function () {
+
     }
   },
   mounted () {
