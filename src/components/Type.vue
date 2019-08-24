@@ -22,7 +22,7 @@ import CurrentStatus from '@/components/CurrentStatus.vue'
 import dict from '../../lib/wordList.json'
 
 export default {
-  name: 'Type',
+  name: 'Type',     
   components: {
     'DispJp': DispJp,
     'DispRm': DispRm,
