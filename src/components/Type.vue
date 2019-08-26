@@ -24,8 +24,10 @@ import CurrentStatus from '@/components/CurrentStatus.vue'
 
 import dict from '../../lib/wordList.json'
 
+const moment = require('moment')
+
 export default {
-  name: 'Type',     
+  name: 'Type',
   components: {
     'DispJp': DispJp,
     'DispRm': DispRm,
@@ -58,6 +60,7 @@ export default {
     initSentence: function () {
       this.setRandomSentence()
       this.$refs.input.focus()
+      this.timeStart = moment.now()
     },
 
     /**
@@ -91,7 +94,7 @@ export default {
 
     /**
      * @param {event} xKey キー入力イベント
-     * @returns {boolean} いずれかの候補に当てはまらる場合、ture
+     * @returns {boolean} いずれかの候補に当てはまる場合、true
      */
     compareCharNext: function (xKey) {
       // どのcharNextにも当てはまらない場合
@@ -208,7 +211,19 @@ export default {
      * 終了画面へ遷移
      */
     onKeydownEscape: function () {
+      this.timeEnd = moment.now()
 
+      const params = {
+        timeSpent: this.timeEnd - this.timeStart, // 経過時間
+        countTyped: this.countTyped,  // タイプ数(ミスは除く)
+        countMiss: this.countMiss,    // ミス数
+        countComp: this.countComp,    // 完了数
+        countGreat: this.countGreat,  // ミスなし完了数
+        keyMiss: null                 // ミスしたキーの情報
+      }
+
+      // 結果ポップアップを表示
+      this.$router.push({name: 'result', params: params})
     }
   },
   mounted () {

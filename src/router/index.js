@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import 'bulma/css/bulma.css'
 
 import Home from '@/components/Home'
-import TypingTest from '@/components/TypingTest'
 import Type from '@/components/Type'
 
 Vue.use(Router)
@@ -15,11 +14,6 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
-    },
-    {
-      path: '/TypingTest',
-      name: 'TypingTest',
-      component: TypingTest
     },
     {
       path: '/Type',

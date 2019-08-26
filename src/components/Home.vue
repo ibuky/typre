@@ -7,6 +7,7 @@
             typre
           </h1>
           <h2 class="subtitle">keyboard typing demonstration</h2>
+          <br>
           <button class="button is-info" @click="$router.push('Type')">Start</button>
         </div>
       </div>
