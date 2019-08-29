@@ -1,5 +1,5 @@
 <template>
-  <div class="typing-test">
+  <div ref="typeRoot">
     <section class="hero is-fullheight-with-navbar">
       <div class="hero-body">
         <div ref="count" class="container">
@@ -13,7 +13,13 @@
         </div>
       </div>
     </section>
-    <CurrentStatus :countTyped="countTyped" :countMiss="countMiss" :countComp="countComp"></CurrentStatus>
+    <CurrentStatus
+      :countTyped="countTyped"
+      :countMiss="countMiss"
+      :countComp="countComp"
+      :countStartSentence="countStartSentence"
+      :countLastSentence="countLastSentence"
+    ></CurrentStatus>
   </div>
 </template>
 
@@ -25,6 +31,8 @@ import CurrentStatus from '@/components/CurrentStatus.vue'
 import dict from '../../lib/wordList.json'
 
 const moment = require('moment')
+
+let timer = null
 
 export default {
   name: 'Type',
@@ -43,14 +51,16 @@ export default {
 
       countDown: 3,       // 開始までのカウントダウン
 
-      timeStart: null,    // 開始時間
-      timeEnd: null,      // 終了時間
-      countTyped: 0,      // タイプ数(ミスは除く)
-      countMiss: 0,       // ミス数
-      countComp: 0,       // 完了数
-      countGreat: 0,      // ミスなし完了数
+      timeStart: null,        // 開始時間
+      timeEnd: null,          // 終了時間
+      countStartSentence: 0,  // 開始時のセンテンス数
+      countLastSentence: 0,   // 残りのセンテンス数
+      countTyped: 0,          // タイプ数(ミスは除く)
+      countMiss: 0,           // ミス数
+      countComp: 0,           // 完了数
+      countGreat: 0,          // ミスなし完了数
 
-      keyMiss: {}         // ミスしたキーの情報
+      keyMiss: {}             // ミスしたキーの情報
     }
   },
   methods: {
@@ -58,19 +68,39 @@ export default {
      * 初期化の処理
      */
     initSentence: function () {
-      this.setRandomSentence()
+      this.prepareRandomSentence()
+      this.countStartSentence = this.dictionary.length
+      this.countLastSentence = this.countStartSentence
+
+      this.setSentence()
       this.$refs.input.focus()
       this.timeStart = moment.now()
+
+      clearInterval(timer)
+    },
+
+    /**
+     * 辞書をランダムに並び替える
+     */
+    prepareRandomSentence: function () {
+      // Fisher-Yates shuffle
+      let i = this.dictionary.length
+      while (i > 0) {
+        let j = Math.floor(Math.random() * i)
+        let t = this.dictionary[--i]
+        this.dictionary[i] = this.dictionary[j]
+        this.dictionary[j] = t
+      }
     },
 
     /**
      * キー押下時の処理
      */
     onKeydown: function (e) {
+      if (e.key === 'Escape') this.onKeydownEscape()
+
       if (this.isModKeys(e.key)) return // 修飾キーは無視
       if (e.repeat) return              // キーリピート状態は無視
-
-      if (e.key === 'Escape') this.onKeydownEscape()
 
       // 正誤判定
       this.compareCharNext(e.key) ? this.onCorrect() : this.onMismatch()
@@ -105,12 +135,11 @@ export default {
     },
 
     /**
-     * ランダムな文を画面上にセットします
+     * 文を画面上にセットします
      */
-    setRandomSentence: function () {
-      const dict = this.dictionary
-      const sentenceRandom = dict[Math.floor(Math.random() * Math.floor(dict.length))]
-      const sentenceRmWithNextKey = sentenceRandom.sentenceRm.map((s) => {
+    setSentence: function () {
+      const sentence = this.dictionary[0]
+      const sentenceRmWithNextKey = sentence.sentenceRm.map((s) => {
         // charNextを追加してそのまま返す
         const charFirst = this.getFirstChar(s)
         return {
@@ -119,7 +148,7 @@ export default {
         }
       })
 
-      this.sentenceJp = sentenceRandom.sentenceJp
+      this.sentenceJp = sentence.sentenceJp
       this.sentenceRm = sentenceRmWithNextKey
       this.sentenceRmDisp = this.sentenceRm[0].romaji
     },
@@ -137,6 +166,11 @@ export default {
      */
     onMismatch: function () {
       this.countMiss++
+      this.setBackgroundFlash()
+    },
+
+    setBackgroundFlash: function () {
+      this.$refs.typeRoot.classList.add('blink')
     },
 
     /**
@@ -181,8 +215,38 @@ export default {
      */
     completeSentence: function () {
       this.countComp++
-      this.clearDisplay()
-      this.setRandomSentence()
+      this.countLastSentence--
+
+      this.dictionary.shift() // 辞書から完了した文章を削除
+      this.clearDisplay()     // 画面から完了した文書を削除
+
+      // 文章の残りが0となった時終了
+      if (this.dictionary.length === 0) {
+        this.completeGame(true)
+      } else {
+        // 続行。次の文章をセット
+        this.setSentence()
+      }
+    },
+
+    /**
+     * 終了処理
+     * @param {boolean} xCompF trueの場合完了、falseの場合途中終了
+     */
+    completeGame: function (xCompF) {
+      this.timeEnd = moment.now()
+
+      const params = {
+        timeSpent: this.timeEnd - this.timeStart, // 経過時間
+        countTyped: this.countTyped,  // タイプ数(ミスは除く)
+        countMiss: this.countMiss,    // ミス数
+        countComp: this.countComp,    // 完了数
+        countGreat: this.countGreat,  // ミスなし完了数
+        keyMiss: null                 // ミスしたキーの情報
+      }
+
+      // 結果ポップアップを表示
+      this.$router.push({name: 'Result', params: params})
     },
 
     /**
@@ -196,13 +260,12 @@ export default {
      * カウントダウンをスタート
      */
     startCountDown: function () {
-      let timer = setInterval(() => {
+      timer = setInterval(() => {
         this.countDown--
         if (this.countDown === 0) {
           this.$refs.count.classList.add('display-none')
           this.$refs.sentence.classList.remove('display-none')
           this.initSentence()
-          clearInterval(timer)
         }
       }, 1000)
     },
@@ -211,24 +274,11 @@ export default {
      * 終了画面へ遷移
      */
     onKeydownEscape: function () {
-      this.timeEnd = moment.now()
-
-      const params = {
-        timeSpent: this.timeEnd - this.timeStart, // 経過時間
-        countTyped: this.countTyped,  // タイプ数(ミスは除く)
-        countMiss: this.countMiss,    // ミス数
-        countComp: this.countComp,    // 完了数
-        countGreat: this.countGreat,  // ミスなし完了数
-        keyMiss: null                 // ミスしたキーの情報
-      }
-
-      // 結果ポップアップを表示
-      this.$router.push({name: 'result', params: params})
+      this.completeGame(false)
     }
   },
   mounted () {
-    this.dictionary = dict.dictionary
-    // 辞書内からランダムに選択
+    this.dictionary = dict.dictionary.slice()
     this.$refs.sentence.classList.add('display-none')
     this.startCountDown()
   },
@@ -251,5 +301,24 @@ input {
 
 .display-none {
   display: none;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.blink {
+  animation: blinkBackground 300ms
+}
+
+@keyframes blinkBackground {
+  0% { background: #FFFFFF }
+  5% { background: #fde991 }
+  30% { background: #fff9e0 }
+  100% { background: #FFFFFF }
 }
 </style>
