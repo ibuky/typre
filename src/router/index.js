@@ -4,6 +4,7 @@ import 'bulma/css/bulma.css'
 
 import Home from '@/components/Home'
 import Type from '@/components/Type'
+import Result from '@/components/Result'
 
 Vue.use(Router)
 
@@ -19,6 +20,11 @@ export default new Router({
       path: '/Type',
       name: 'Type',
       component: Type
+    },
+    {
+      path: '/Result',
+      name: 'Result',
+      component: Result
     }
   ]
 })
