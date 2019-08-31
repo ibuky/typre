@@ -24,13 +24,15 @@
 </template>
 
 <script>
-import DispJp from '@/components/DispJp.vue'
-import DispRm from '@/components/DispRm.vue'
-import CurrentStatus from '@/components/CurrentStatus.vue'
+import DispJp         from '@/components/DispJp.vue'
+import DispRm         from '@/components/DispRm.vue'
+import CurrentStatus  from '@/components/CurrentStatus.vue'
 
 import dict from '../../lib/wordList.json'
 
-const moment = require('moment')
+const moment  = require('moment')
+const _       = require('lodash')
+const C       = require('../../lib/typreConst')
 
 let timer = null
 
@@ -68,7 +70,12 @@ export default {
      * 初期化の処理
      */
     initSentence: function () {
-      this.prepareRandomSentence()
+      const mode = this.$router.params.gameMode
+      if (mode === C.GAMEMODE_RANDOM) {
+        // ランダム単語
+        _.shuffle(this.dictionary)
+      }
+
       this.countStartSentence = this.dictionary.length
       this.countLastSentence = this.countStartSentence
 
@@ -77,20 +84,6 @@ export default {
       this.timeStart = moment.now()
 
       clearInterval(timer)
-    },
-
-    /**
-     * 辞書をランダムに並び替える
-     */
-    prepareRandomSentence: function () {
-      // Fisher-Yates shuffle
-      let i = this.dictionary.length
-      while (i > 0) {
-        let j = Math.floor(Math.random() * i)
-        let t = this.dictionary[--i]
-        this.dictionary[i] = this.dictionary[j]
-        this.dictionary[j] = t
-      }
     },
 
     /**
@@ -107,7 +100,7 @@ export default {
     },
 
     /**
-     * 修飾キーかどうか判定します
+     * 修飾キーかどうか判定
      * @param {String} xKey キー
      * @returns {boolean} 修飾キーの場合、true
      */
@@ -135,7 +128,7 @@ export default {
     },
 
     /**
-     * 文を画面上にセットします
+     * 文を画面上にセット
      */
     setSentence: function () {
       const sentence = this.dictionary[0]
@@ -154,7 +147,7 @@ export default {
     },
 
     /**
-     * input要素にフォーカスをセットします
+     * input要素にフォーカスをセット
      * @param {object} e 要素
      */
     setFocus: function (e) {
@@ -169,6 +162,10 @@ export default {
       this.setBackgroundFlash()
     },
 
+    /**
+     * 背景色をフラッシュ
+     * 色はこのファイルのCSSのblinkBackgroundを編集
+     */
     setBackgroundFlash: function () {
       this.$refs.typeRoot.classList.add('blink')
     },
@@ -202,7 +199,7 @@ export default {
     },
 
     /**
-     * 候補文章の、残りの中から最初の文字を取得します
+     * 候補文章の、残りの中から最初の文字を取得
      * @param {String} xSentence 文章
      */
     getFirstChar: function (xSentence) {

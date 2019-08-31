@@ -8,7 +8,9 @@
           </h1>
           <h2 class="subtitle">keyboard typing demonstration</h2>
           <br>
-          <button class="button is-info" @click="$router.push('Type')">Start</button>
+          <button class="button is-info" @click="$router.push({name: 'Type', params: {gameMode: '1'}})">
+            Start
+          </button>
         </div>
       </div>
     </section>
