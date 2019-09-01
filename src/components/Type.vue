@@ -28,11 +28,11 @@ import DispJp         from '@/components/DispJp.vue'
 import DispRm         from '@/components/DispRm.vue'
 import CurrentStatus  from '@/components/CurrentStatus.vue'
 
+import C    from '../../lib/typreConst'
 import dict from '../../lib/wordList.json'
 
 const moment  = require('moment')
 const _       = require('lodash')
-const C       = require('../../lib/typreConst')
 
 let timer = null
 
@@ -53,8 +53,8 @@ export default {
 
       countDown: 3,       // 開始までのカウントダウン
 
-      timeStart: null,        // 開始時間
-      timeEnd: null,          // 終了時間
+      timeStart: 0,           // 開始時間
+      timeEnd: 0,             // 終了時間
       countStartSentence: 0,  // 開始時のセンテンス数
       countLastSentence: 0,   // 残りのセンテンス数
       countTyped: 0,          // タイプ数(ミスは除く)
@@ -70,12 +70,6 @@ export default {
      * 初期化の処理
      */
     initSentence: function () {
-      const mode = this.$router.params.gameMode
-      if (mode === C.GAMEMODE_RANDOM) {
-        // ランダム単語
-        _.shuffle(this.dictionary)
-      }
-
       this.countStartSentence = this.dictionary.length
       this.countLastSentence = this.countStartSentence
 
@@ -168,6 +162,9 @@ export default {
      */
     setBackgroundFlash: function () {
       this.$refs.typeRoot.classList.add('blink')
+      setTimeout(() => {
+        this.$refs.typeRoot.classList.remove('blink')
+      }, 100)
     },
 
     /**
@@ -277,6 +274,12 @@ export default {
   mounted () {
     this.dictionary = dict.dictionary.slice()
     this.$refs.sentence.classList.add('display-none')
+
+    const mode = this.$route.params.gameMode
+    if (mode === C.GAMEMODE_RANDOM_WORD) {
+      this.dictionary = _.shuffle(this.dictionary)
+    }
+
     this.startCountDown()
   },
   directives: {
