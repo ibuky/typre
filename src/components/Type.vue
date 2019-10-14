@@ -17,7 +17,6 @@
       :countTyped="countTyped"
       :countMiss="countMiss"
       :countComp="countComp"
-      :countStartSentence="countStartSentence"
       :countLastSentence="countLastSentence"
     ></CurrentStatus>
   </div>
@@ -45,7 +44,7 @@ export default {
   },
   data () {
     return {
-      dictionary: [],     // 単語辞書
+      settings: {},       // セッティング
       sentenceJp: '',     // 表示する日本語
       sentenceRm: [],     // 入力可能なローマ字全件
       sentenceRmDisp: '', // 表示するローマ字
@@ -55,7 +54,6 @@ export default {
 
       timeStart: 0,           // 開始時間
       timeEnd: 0,             // 終了時間
-      countStartSentence: 0,  // 開始時のセンテンス数
       countLastSentence: 0,   // 残りのセンテンス数
       countTyped: 0,          // タイプ数(ミスは除く)
       countMiss: 0,           // ミス数
@@ -70,8 +68,7 @@ export default {
      * 初期化の処理
      */
     initSentence: function () {
-      this.countStartSentence = this.dictionary.length
-      this.countLastSentence = this.countStartSentence
+      this.countLastSentence = this.settings.wordCount  // スタート画面で設定した値をセット
 
       this.setSentence()
       this.$refs.input.focus()
@@ -215,7 +212,7 @@ export default {
       this.clearDisplay()     // 画面から完了した文書を削除
 
       // 文章の残りが0となった時終了
-      if (this.dictionary.length === 0) {
+      if (this.countLastSentence === 0) {
         this.completeGame(true)
       } else {
         // 続行。次の文章をセット
@@ -272,6 +269,7 @@ export default {
     }
   },
   mounted () {
+    this.settings = this.$route.params.settings
     this.dictionary = dict.dictionary.slice()
     this.$refs.sentence.classList.add('display-none')
 
