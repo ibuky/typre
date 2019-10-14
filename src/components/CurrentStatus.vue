@@ -4,7 +4,6 @@
     <p>ミス数: {{ countMiss }} </p>&nbsp;
     <p>完了数: {{ countComp }} </p>&nbsp;
     <p>残数: {{ countLastSentence }} </p>&nbsp;
-    <p>総数: {{ countStartSentence }} </p>&nbsp;
   </nav>
 </template>
 
