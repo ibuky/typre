@@ -16,11 +16,10 @@
           </div>
 
           <!-- Game Settings -->
-
-          <div class="column is-half is-offset-one-quarter is-centered has-background-light game-settings">
+          <div class="column is-4 is-offset-4 has-background-light game-settings">
             <transition name="game-settings">
               <div class="settings-word-random" v-if="gameMode === C.GAMEMODE_RANDOM_WORD">
-                <SettingsWordRandom></SettingsWordRandom>
+                <SettingsWordRandom @changeSettings="changeSettings"></SettingsWordRandom>
               </div>
               <div class="settings-sent-random" v-else-if="gameMode === C.GAMEMODE_RANDOM_SENT">
                 <SettingsSentRandom></SettingsSentRandom>
@@ -30,11 +29,12 @@
               </div>
             </transition>
           </div>
+
         </div>
 
         <nav class="navbar is-fixed-bottom">
           <div class="bottom-bar">
-            <span class="button is-info is-size-5" @click="$router.push({name: 'Type', params: {gameMode: gameMode}})">
+            <span class="button is-info is-size-5" @click="this.onClickStart">
               Start
             </span>
           </div>
@@ -61,7 +61,10 @@ export default {
   data () {
     return {
       C: C,         // 定数を保持
-      gameMode: ''
+      gameMode: '',
+      settings: {
+        wordCount: 50
+      }
     }
   },
   methods: {
@@ -112,6 +115,21 @@ export default {
      */
     onClickFromWikipe: function () {
       this.onClickCategory(event, C.GAMEMODE_RANDOM_WIKI)
+    },
+
+    /**
+     * Startクリック時の処理
+     */
+    onClickStart: function () {
+      // ゲーム画面へ遷移
+      this.$router.push({name: 'Type', params: {gameMode: this.gameMode, settings: this.settings}})
+    },
+
+    /**
+     * セッティング値が変更されたときに値を反映
+     */
+    changeSettings: function (xSet) {
+      this.settings = xSet
     }
   },
   mounted () {
