@@ -65,7 +65,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       }
     ])
-  ]
+  ],
+  externals:[{
+    xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}',
+    "isomorphic-fetch": "fetch"
+  }],
 })
 
 module.exports = new Promise((resolve, reject) => {
